@@ -8,6 +8,7 @@ const active = new Map();
 const ytdl = require('ytdl-core');
 const search = require('yt-search');
 const configs = require("./configs.json");
+const timestamp = require("console-timestamp");
 var botConfigs = {
     token: "BOT_TOKEN",
     prefix: "BOT_PREFIX",
@@ -182,8 +183,6 @@ client.on("message", async function(message) {
             .addField("Time", message.createdAt)
             .addField("Reason", reason);
 
-
-        //let reportschannel = message.guild.channels.find(`name`, "logs");
         let channel = message.guild.channels.find(ch => ch.name === 'logs');
         if (!channel) {
             message.channel.send("Can't find a 'logs' channel.");
@@ -209,7 +208,6 @@ client.on("message", async function(message) {
             .addField("Muted In", message.channel)
             .addField("Time", message.createdAt)
 
-        //let muteChannel = message.guild.channels.find(`name`, "logs");
         let channel = message.guild.channels.find(ch => ch.name === 'logs');
         if (!channel) {
             message.channel.send("Can't find a 'logs' channel.");
@@ -300,20 +298,20 @@ client.on("message", async function(message) {
         const Lockembed = new Discord.RichEmbed()
             .setColor(0xDD2E44)
             .setTimestamp()
-            .setTitle("🔒 LOCKDOWN NOTICE 🔒")
+            .setTitle("ðŸ”’ LOCKDOWN NOTICE ðŸ”’")
             .setDescription(`This channel has been lockdown by ${message.author.tag} for ${time}`);
 
         const Unlockembed = new Discord.RichEmbed()
             .setColor(0xDD2E44)
             .setTimestamp()
-            .setTitle("🔓 LOCKDOWN NOTICE 🔓")
+            .setTitle("ðŸ”“ LOCKDOWN NOTICE ðŸ”“")
             .setDescription("This channel is now unlocked.");
 
         if (message.channel.permissionsFor(message.author.id).has("MUTE_MEMBERS") === false) {
             const embed = new Discord.RichEmbed()
                 .setColor(0xDD2E44)
                 .setTimestamp()
-                .setTitle("❌ ERROR: MISSING PERMISSIONS! ❌")
+                .setTitle("âŒ ERROR: MISSING PERMISSIONS! âŒ")
                 .setDescription("You do not have the correct permissions for this command!");
             return message.channel.send({ embed });
         }
@@ -392,7 +390,7 @@ client.on("message", async function(message) {
                 .setDescription("DM Message")
                 .setColor("#15f153")
                 .setDescription(reason)
-                .setFooter("This message was sent to you by: " + `${message.author.username}  ` + " • " + `${timestamp('hh:mm:ss')}`, `${message.author.displayAvatarURL}`)
+                .setFooter("This message was sent to you by: " + `${message.author.username}  ` + " â€¢ " + `${timestamp('hh:mm:ss')}`, `${message.author.displayAvatarURL}`)
             let channel = client.users.get(rUser.id)
             if (!channel) {
                 message.channel.send("Can't find a user.")
@@ -406,7 +404,146 @@ client.on("message", async function(message) {
           message.delete()
           message.channel.send(`<@${message.author.id}> The dice landed on ${Math.floor(Math.random() * 6) + 1}`).then(msg => {msg.delete(8000)})
         }
+        //plugin 15: Warn warn plugin
+        if (command === "warn" && botConfigs.plugins[15].activated == true) {
+            if (!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send("You don't have permission!");
+            let rUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
+            if (!rUser) return message.channel.send("Provide a valid Ping or user id");
+            let repCH = message;
+            let reason = args.join(" ").slice(22);
+            
+    
+            let reportEmbed = new Discord.RichEmbed()
+                .setTitle("Warnings")
+                .setColor("#15f153")
+                .addField("Warned User", `${rUser} with ID: ${rUser.id}`)
+                .addField("Warned By", `${message.author} with ID: ${message.author.id}`)
+                .addField("In channel", repCH.channel)
+                .addField("Time", repCH.createdAt)
+                .addField("Reason", reason)
+    
+            let channel = message.guild.channels.find(ch => ch.name === 'logs');
 
+            if (!channel) {
+                message.channel.send("Can't find a 'logs' channel.");
+                return;
+            }
+    
+            message.delete().catch(O_o => { });
+            channel.send(reportEmbed);
+        }
+
+        if (command === "help" && botConfigs.plugins[16].activated == true) {
+            let helpACT = [];
+            let helpNACT = [];            
+            let Nplugin = "";
+            let plugin = "";
+
+            botConfigs.plugins.forEach(element => {
+                if (element.activated == true) {
+                    helpACT.push("âœ”" + element.name)
+                    plugin = helpACT.join('\n').toString();
+                } else if (element.activated == false) {
+                    helpNACT.push("âœ–" + element.name)
+                    Nplugin = helpNACT.join('\n').toString();
+              } 
+            });
+             notActive(Nplugin);
+            function notActive(Nplugin) {
+                let NhelpEmbed = new Discord.RichEmbed()
+                .setTitle("Help")
+                .setColor("GRAY")
+                .setDescription(Nplugin)
+				if (!Nplugin) return;
+                message.channel.send(NhelpEmbed)
+            }
+                Active(plugin)
+                function Active(plugin) {
+                    let helpEmbed = new Discord.RichEmbed()
+                    .setTitle("Help")
+                    .setColor("GRAY")
+                    .setDescription(plugin)
+                    message.channel.send(helpEmbed)
+          }
+    }
+
+    if (command === "flip" && botConfigs.plugins[17].activated == true) {
+        let x = Math.floor(Math.random() * 3) + 1
+       if (x == 1) {
+           message.channel.send(`<@${message.author.id}>, tails`)
+       } else if (x == 2) {
+        message.channel.send(`<@${message.author.id}>, heads`)
+       } else {
+        message.channel.send(`<@${message.author.id}>, No way! it landed on the side`)
+       }
+    }
+
+    if (command === "announce" && botConfigs.plugins[18].activated === true) {
+        const messageArray = message.content.split(/ +/g)
+        let id = args[0].slice(2, -1)
+        var embed_channel = message.guild.channels.find(ch => ch.id == id)
+    
+        let embed_color = args[1]
+        let embed_title = args[2]
+        let embed_desc = messageArray.slice(4).join(` `)
+    
+        const AnnounceEmbed = new Discord.RichEmbed()
+            .setTitle(embed_title)
+            .setColor(embed_color)
+            .setDescription(embed_desc)
+        if (!embed_channel) return message.channel.send(`Sorry, either that's an invalid channel or it isn't a channel at all. Please redo your command!`)
+
+            message.channel.send(`Are you sure you would like to send an announcement with the following information?`).then((msgx) => {
+                message.channel.send({embed: {
+                    color: 0000000,
+                    description: `Title: **${args[2]}**\n` +
+                                 `Color: **${args[1]}**\n` +
+                                 `Description: **${embed_desc}**\n` +
+                                 `Channel: ${embed_channel}`
+                }}).then(awaitResponse => {
+                    message.channel.awaitMessages(response => response.author.id === message.author.id, {
+                        /* Above line matches original message author ID with the new message author ID. */
+                        max: 1,
+                        time: 15000,
+                        error: ['time'],
+                    }).then((collectedResponse) => {
+                        /* If the user wants to send the announcement, they say yes */
+                        if (collectedResponse.first().content === `yes` || collectedResponse.first().content === `Yes`) {
+                            //embed_channel.send(`@everyone`)
+                            embed_channel.send(AnnounceEmbed);
+            
+                            message.delete()
+                            msgx.delete()
+                            collectedResponse.first().delete()
+                            awaitResponse.delete()
+    
+                            message.channel.send(`Successfully sent announcement!`).then(announceconfirm => {
+                                announceconfirm.delete(3000)
+                            })
+                        }
+                        /* If the user wants to send the announcement, they say yes */
+
+                        /* If the user does not want to send the announcement, they say no */
+                        if (collectedResponse.first().content === `no` || collectedResponse.first().content === `No`) {
+                            message.channel.send(`Cancelled action.`).then(cancelaction => {
+    
+                                cancelaction.delete()
+                                message.delete()
+                                msgx.delete()
+                                collectedResponse.first().delete()
+                                awaitResponse.delete()
+
+                                message.channel.send(`Announcement cancelled.`).then(announceconfirm => {
+                                    announceconfirm.delete(3000)
+                                })
+                            })            
+                        }
+                        /* If the user does not want to send the announcement, they say no */
+                    })
+                })
+            })
+    }
+    //close command for Ticket plugin
     if (command === "close") {
         if (!args[0]) return message.channel.send("Please specify what you wanna close - Example: !close ticket").catch(console.error);
         if (args[0] === "ticket") {
