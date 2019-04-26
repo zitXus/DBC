@@ -1,3 +1,25 @@
+// Fancy Logo
+
+console.log(" ");
+console.log(" ");
+console.log("                ██████╗ ██╗███████╗ ██████╗ ██████╗ ██████╗ ██████╗             ██████╗  ██████╗ ████████╗ ");
+console.log("                ██╔══██╗██║██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔══██╗            ██╔══██╗██╔═══██╗╚══██╔══╝ ");
+console.log("                ██║  ██║██║███████╗██║     ██║   ██║██████╔╝██║  ██║            ██████╔╝██║   ██║   ██║  ");
+console.log("                ██║  ██║██║███████╗██║     ██║   ██║██████╔╝██║  ██║            ██╔══██╗██║   ██║   ██║");
+console.log("                ██║  ██║██║╚════██║██║     ██║   ██║██╔══██╗██║  ██║            ██████╔╝╚██████╔╝   ██║");
+console.log("                ██████╔╝██║███████║╚██████╗╚██████╔╝██║  ██║██████╔╝            ╚═════╝  ╚═════╝    ╚═╝");
+console.log(" ");
+console.log(" ");
+console.log("                 ██████╗ ██████╗ ███╗   ██╗████████╗██████╗  ██████╗ ██╗     ███████╗");
+console.log("                ██╔════╝██╔═══██╗████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗██║     ██╔════╝");
+console.log("                ██║     ██║   ██║██╔██╗ ██║   ██║   ██████╔╝██║   ██║██║     ███████╗");
+console.log("                ██║     ██║   ██║██║╚██╗██║   ██║   ██╔══██╗██║   ██║██║     ╚════██║");
+console.log("                ╚██████╗╚██████╔╝██║ ╚████║   ██║   ██║  ██║╚██████╔╝███████╗███████║");
+console.log("                 ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚══════╝");
+console.log(" ");
+console.log(" ");
+
+
 const fs = require("fs");
 FFMPEG = require('ffmpeg');
 const ms = require("ms");
@@ -18,8 +40,11 @@ var botConfigs = {
     plugins: "BOT_PLUGINS",
     welcomemessage: "BOT_WELCOMEMESSAGE",
     weather: "BOT_WEATHER",
+    autorole: "BOT_AUTOROLE", //AutoRoleID: { "RoleID": "" },
     ticketsystem: "BOT_TICKETSYSTEM"
 };
+
+console.log("|  Loading Scripts ");
 
 var ops = {
     active: active
@@ -56,6 +81,16 @@ client.on("guildMemberAdd", async function(member) {
             .send(`${member}, ${botConfigs.welcomemessage.text}`);
     }
 });
+
+client.on('guildMemberAdd', async function (member) {
+    if (botConfigs.plugins[19].activated == true) {
+        
+       if (member.guild.id == botConfigs.autorole.guildID) {
+       member.addRole(botConfigs.autorole.autoroleID); 
+       }
+    }
+});
+
 
 client.on("message", async function(message) {
     if (botConfigs.plugins[11].activated == true) {
@@ -748,8 +783,27 @@ client.on("message", async function(message) {
     }
 });
 
+console.log("|  Loggin in...   ");
 client.login(botConfigs.token);
-console.log("Bot started!");
+console.log("|  Bot was logged in.   ");
+console.log("|------------------");
+console.log("|  Bot Info:    ");
+console.log("|  ");
+console.log("|  Bot Prefix: " + botConfigs.prefix + " ");
+
+
+var ListPlugins = " | " + ListPlugins
+botConfigs.plugins.forEach(element => {
+    if (element.activated == true) {
+        ListPlugins = ListPlugins + element.name + "\n"
+
+    }
+});
+console.log(" ");
+console.log(" ");
+console.log("Activated Plugins: ");
+console.log("------------------");
+console.log(ListPlugins.replace(" | undefined", ""));
 
 
 async function play(client, ops, data) {
