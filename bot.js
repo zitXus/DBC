@@ -476,10 +476,10 @@ client.on("message", async function(message) {
 
             botConfigs.plugins.forEach(element => {
                 if (element.activated == true) {
-                    helpACT.push("âœ”" + element.name)
+                    helpACT.push("✔" + element.name)
                     plugin = helpACT.join('\n').toString();
                 } else if (element.activated == false) {
-                    helpNACT.push("âœ–" + element.name)
+                    helpNACT.push("✖" + element.name)
                     Nplugin = helpNACT.join('\n').toString();
               } 
             });
