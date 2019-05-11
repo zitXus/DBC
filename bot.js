@@ -40,7 +40,7 @@ var botConfigs = {
     plugins: "BOT_PLUGINS",
     welcomemessage: "BOT_WELCOMEMESSAGE",
     weather: "BOT_WEATHER",
-    autorole: "BOT_AUTOROLE", //AutoRoleID: { "RoleID": "" },
+    autorole: "BOT_AUTOROLE",
     ticketsystem: "BOT_TICKETSYSTEM"
 };
 
