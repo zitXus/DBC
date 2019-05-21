@@ -92,16 +92,34 @@ client.on('guildMemberAdd', async function (member) {
 });
 
 
-client.on("message", async function(message) {
+client.on("message", async function (message) {
     if (botConfigs.plugins[11].activated == true) {
-        configs.bannedWords.forEach(async function(element) {
-            if (message.content.includes(element)) {
-                message.delete().catch(O_o => {});
-                let projectData = await handler.getProjectData();
-                message.author.send(projectData.bannedwords.responseMessage);
-                return;
-            }
-        });
+        let bannedWords = await getConfigs();
+        if (bannedWords.length > 0) {
+            bannedWords.forEach(async function (element) {
+                let msg = message.content.toLowerCase();
+                if (msg.includes(element)) {
+                    message.delete().catch(O_o => { });
+                    let projectData = await configs;
+                    message.author.send(projectData.bannedwords.responseMessage);
+                    let pjc = projectData.bannedwords.channelid;
+
+                    if (pjc == "" || pjc == null || pjc == undefined) {
+                        return;
+                    }
+                   let CH = client.channels.get(pjc);
+                        console.log(projectData.bannedwords.channelid)
+                        let embed = new Discord.RichEmbed()
+                        .setDescription("~Banned word~")
+                        .setColor("#e56b00")
+                        .addField("Message: ", `${msg}`)
+                        .addField("Send By", `<@${message.author.id}> with ID ${message.author.id}`)
+                        .addField("Sent In", message.channel)
+                        .addField("Time", message.createdAt);
+                         CH.send(embed);
+                }
+            });
+        }
     }
 
     let prefix = botConfigs.prefix;
