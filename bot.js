@@ -94,21 +94,25 @@ client.on('guildMemberAdd', async function (member) {
 
 client.on("message", async function (message) {
     if (botConfigs.plugins[11].activated == true) {
-        let bannedWords = await getConfigs();
-        if (bannedWords.length > 0) {
-            bannedWords.forEach(async function (element) {
+        //if (botConfigs.bannedwords.channelid.length > 0) {
+            configs.bannedWords.forEach(async function (element) {
                 let msg = message.content.toLowerCase();
                 if (msg.includes(element)) {
                     message.delete().catch(O_o => { });
-                    let projectData = await configs;
-                    message.author.send(projectData.bannedwords.responseMessage);
+                    let projectData = await botConfigs;
+                    let Dmchannel = client.users.get(message.author.id);
+                        if (!Dmchannel) {
+                            return;
+                        }
+                    
+                    Dmchannel.send(projectData.bannedwords.responseMessage);
                     let pjc = projectData.bannedwords.channelid;
 
                     if (pjc == "" || pjc == null || pjc == undefined) {
                         return;
                     }
-                   let CH = client.channels.get(pjc);
-                        console.log(projectData.bannedwords.channelid)
+                    if (botConfigs.bannedwords.channelid.length > 10) {
+                   let CH = client.channels.get(pjc).catch(O => {})
                         let embed = new Discord.RichEmbed()
                         .setDescription("~Banned word~")
                         .setColor("#e56b00")
@@ -118,8 +122,8 @@ client.on("message", async function (message) {
                         .addField("Time", message.createdAt);
                          CH.send(embed);
                 }
-            });
-        }
+            }
+        })
     }
 
     let prefix = botConfigs.prefix;
