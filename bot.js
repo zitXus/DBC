@@ -197,7 +197,70 @@ client.on("message", async function (message) {
         message.guild.member(bUser).kick(bReason);
         channel.send(banEmbed);
     }
-
+	
+    if(command === 'temprole' && botConfigs.plugins[21].activated == true) {
+    
+    if(!message.member.hasPermission('MANAGE_ROLES')) return message.reply('You do not have required permission');
+    
+    if(!message.guild.members.get(client.user.id).hasPermission('MANAGE_ROLES')) return message.reply("I don't have `MANAGE ROLES` Permission")
+    
+    if(!args[0]) return message.reply('You should spcefic [User] [Role] [Time]');
+    
+    let user = message.mentions.members.first() || message.guild.members.get(args[0]);
+    
+    if(!user) return  message.reply('You Should Mention User or User ID');
+    
+    let role = message.mentions.roles.first() || message.guild.roles.get(args[1]);
+    
+    if(!role) return message.reply('You Should Mention Role or Role ID');
+    
+    if(user.roles.has(role.id)) return message.reply(`This User ${user.user.tag} Already Have \`${role.name}\` Role`)
+    
+    let time = ms(args[2]);
+    
+    if(!time) return message.reply('Spcefic Time');
+    
+    let channel = message.guild.channels.find(ch => ch.name === 'logs');
+    
+    if(!channel) return message.reply("Can't find a **`logs`** channel.");
+    
+    try {
+      await user.addRole(role.id);
+      channel.send(
+        new Discord.RichEmbed()
+          .setTitle("~ Temporary Role Added ~")
+          .setColor(0x00e676)
+          .addField('Added By?', message.author.tag + `(${message.member})`)
+          .addField('Role', role)
+          .addField('Added To?', user.user.tag + (`${user.user}`))
+          .addField('Duration', ms(time))
+          .setThumbnail(user.user.displayAvatarURL)
+      ).then(() => {
+        message.reply(`Role **\`${role.name}\`** Added To ${user.user.tag}(${user.user}) For ${ms(time)}`).then(m => {
+          m.delete(5000)
+        })
+      });
+    } catch(e) {
+      message.reply(`Unexpected Error: ${e.message}`);
+    }
+    
+    setTimeout(async () => {
+      if(!user.roles.has(role.id)) return;
+        await user.removeRole(role.id);
+        channel.send(
+          new Discord.RichEmbed()
+          .setTitle("~ Role Removed ~")
+          .setColor(0xff5252)
+          .addField('Removed By?', client.user + ' (Bot)')
+          .addField('Role', role)
+          .addField('Removed From?', user.user.tag + (`${user.user}`))
+          .addField('Reason', "Time's up")
+          .setThumbnail(user.user.displayAvatarURL)
+        )
+    }, time)
+    
+  }
+	
     if (command === "ban" && botConfigs.plugins[3].activated == true) {
         let bUser = message.guild.member(message.mentions.users.first() || message.guild.members.get(args[0]));
         if (!bUser) return message.channel.send("Can't find user!");
