@@ -41,7 +41,8 @@ var botConfigs = {
     welcomemessage: "BOT_WELCOMEMESSAGE",
     weather: "BOT_WEATHER",
     autorole: "BOT_AUTOROLE",
-    ticketsystem: "BOT_TICKETSYSTEM"
+    ticketsystem: "BOT_TICKETSYSTEM",
+    gif: "BOT_GIF"
 };
 
 console.log("|  Loading Scripts ");
