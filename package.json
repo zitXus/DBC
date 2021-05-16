@@ -5,7 +5,8 @@
   "description": "Discord Bot - Controls",
   "main": "bot.js",
   "author": {
-    "name": "DBC"
+    "name": "DBC",
+    "email": "Contact@zitxus.com"
   },
   "scripts": {
     "start": "node bot"
